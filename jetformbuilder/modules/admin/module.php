@@ -10,6 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 use Jet_Form_Builder\Admin\Exceptions\Not_Found_Page_Exception;
 use Jet_Form_Builder\Admin\Pages\Pages_Manager;
+use Jet_Form_Builder\Admin\Tabs_Handlers\Options_Handler;
 use Jet_Form_Builder\Admin\Tabs_Handlers\Tab_Handler_Manager;
 use Jet_Form_Builder\Classes\Http\Utm_Url;
 use Jet_Form_Builder\Classes\Tools;
@@ -60,6 +61,38 @@ class Module implements
 		);
 	}
 
+	/**
+	 * Called by `register_activation_hook`
+	 * inside `jetformbuilder/load.php`
+	 *
+	 * @return void
+	 */
+	public function on_plugin_activate() {
+		/** @var Options_Handler $options */
+		$options_tab = Tab_Handler_Manager::instance()->tab( 'options-tab' );
+
+		$options     = $options_tab->get_options();
+		$new_options = array();
+
+		if ( ! isset( $options['disable_next_button'] ) ) {
+			$new_options['disable_next_button'] = false;
+		}
+		if ( ! isset( $options['scroll_on_next'] ) ) {
+			$new_options['scroll_on_next'] = true;
+		}
+		if ( ! isset( $options['auto_focus'] ) ) {
+			$new_options['auto_focus'] = true;
+		}
+
+		if ( ! $new_options ) {
+			return;
+		}
+
+		$options_tab->update_options(
+			array_merge( $options, $new_options )
+		);
+	}
+
 	public function admin_footer_text( $footer_text ): string {
 		try {
 			Pages_Manager::instance()->get_current();
@@ -95,13 +128,15 @@ For troubleshooting, contact <a href="%2$s" target="_blank">Crocoblock support</
 
 		wp_enqueue_style(
 			$this->get_handle( 'go-pro' ),
-			$this->get_url( 'assets/build/css/go-pro.css' ),
+			$this->get_url( 'assets/build/go-pro.css' ),
 			array(),
 			jet_form_builder()->get_version()
 		);
 
-		$utm = new Utm_Url( 'wp-dashboard/jet-form-builder-plugins-page' );
+		$utm = new Utm_Url( 'plugin' );
+		$utm->set_medium( 'all_plugins' );
 		$utm->set_campaign( 'go-pro-button' );
+		$utm->set_content( $utm->get_license_and_theme() );
 
 		$url = $utm->add_query( JET_FORM_BUILDER_SITE . '/pricing/' );
 
@@ -130,14 +165,14 @@ For troubleshooting, contact <a href="%2$s" target="_blank">Crocoblock support</
 
 		wp_enqueue_style(
 			$handle,
-			$this->get_url( 'assets/build/css/deactivate.css' ),
+			$this->get_url( 'assets/build/deactivate.css' ),
 			array(),
 			jet_form_builder()->get_version()
 		);
 
 		wp_enqueue_script(
 			$handle,
-			$this->get_url( 'assets/build/js/plugins.js' ),
+			$this->get_url( 'assets/build/plugins.js' ),
 			array(),
 			jet_form_builder()->get_version(),
 			true

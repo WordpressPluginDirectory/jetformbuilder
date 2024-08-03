@@ -34,7 +34,10 @@ class Autoloader {
 		'Jet_Form_Builder\\Rest_Api\\Rest_Response'        => 'JFB_Components\\Rest_Api\\Rest_Response',
 		'Jet_Form_Builder\\Rest_Api\\Traits\\Paginated_Args' => 'JFB_Components\\Rest_Api\\Traits\\Paginated_Args',
 		'Jet_Form_Builder\\Rest_Api\\Traits\\Rest_Fetch_Endpoint' => 'JFB_Components\\Rest_Api\\Traits\\Rest_Fetch_Endpoint',
+		// blocks
 		'Jet_Form_Builder\\Blocks\\Manager'                => 'Jet_Form_Builder\\Blocks\\Module',
+		'Jet_Form_Builder\\Blocks\\Types\\Text_Field'      => 'JFB_Modules\\Blocks_V2\\Text_Field\\Block_Type',
+		'Jet_Form_Builder\\Blocks\\Render\\Text_Field_Render' => 'JFB_Modules\\Blocks_V2\\Text_Field\\Block_Render',
 		// gateways
 		'Jet_Form_Builder\\Gateways\\Base_Gateway'         => 'JFB_Modules\\Gateways\\Base_Gateway',
 		'Jet_Form_Builder\\Gateways\\Base_Scenario_Gateway' => 'JFB_Modules\\Gateways\\Base_Scenario_Gateway',
@@ -97,8 +100,8 @@ class Autoloader {
 		'Jet_Form_Builder\\Request\\Field_Data_Parser'     => 'JFB_Modules\\Block_Parsers\\Field_Data_Parser',
 		'Jet_Form_Builder\\Blocks\\Validation'             => 'JFB_Modules\\Validation\\Module',
 		// block renderers
-		'Jet_Form_Builder\\Blocks\\Render\\Radio_Field_Render'    => 'JFB_Modules\\Option_Field\\Blocks\\Radio\\Block_Render',
-		'Jet_Form_Builder\\Blocks\\Render\\Select_Field_Render'   => 'JFB_Modules\\Option_Field\\Blocks\\Select\\Block_Render',
+		'Jet_Form_Builder\\Blocks\\Render\\Radio_Field_Render' => 'JFB_Modules\\Option_Field\\Blocks\\Radio\\Block_Render',
+		'Jet_Form_Builder\\Blocks\\Render\\Select_Field_Render' => 'JFB_Modules\\Option_Field\\Blocks\\Select\\Block_Render',
 		'Jet_Form_Builder\\Blocks\\Render\\Checkbox_Field_Render' => 'JFB_Modules\\Option_Field\\Blocks\\Checkbox\\Block_Render',
 	);
 

@@ -25,7 +25,7 @@ $default_value = ! empty( $args['default'] ) ? $args['default'] : '';
 $prefix        = ! empty( $args['calc_prefix'] ) ? $args['calc_prefix'] : false;
 $suffix        = ! empty( $args['calc_suffix'] ) ? $args['calc_suffix'] : false;
 $precision     = isset( $args['precision'] ) ? $args['precision'] : 0;
-$is_hidden     = isset( $args['calc_hidden'] ) ? filter_var( $args['calc_hidden'], FILTER_VALIDATE_BOOLEAN ) : false;
+$is_hidden     = isset( $args['calc_hidden'] ) ? filter_var( $args['calc_hidden'], defined( 'FILTER_VALIDATE_BOOL' ) ? FILTER_VALIDATE_BOOL : FILTER_VALIDATE_BOOLEAN ) : false;
 
 $this->add_attribute( 'class', $args['class_name'] );
 $this->add_attribute( 'data-formula', $formula );
@@ -41,6 +41,7 @@ $this->add_attribute( 'class', $is_hidden ? 'jet-form-builder__calculated-field-
 // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.WhiteSpace.PrecisionAlignment.Found
 ?>
 <div <?php $this->render_attributes_string(); ?>>
+	<?php do_action( 'jet-form-builder/before-field', $this ); ?>
 	<?php if ( false !== $prefix ) : ?>
 		<div class="jet-form-builder__calculated-field-prefix"><?php echo wp_kses_post( $prefix ); ?></div>
 	<?php endif; ?>
@@ -56,5 +57,6 @@ $this->add_attribute( 'class', $is_hidden ? 'jet-form-builder__calculated-field-
 	<?php if ( false !== $suffix ) : ?>
 		<div class="jet-form-builder__calculated-field-suffix"><?php echo wp_kses_post( $suffix ); ?></div>
 	<?php endif; ?>
+	<?php do_action( 'jet-form-builder/after-field', $this ); ?>
 </div>
 <?php

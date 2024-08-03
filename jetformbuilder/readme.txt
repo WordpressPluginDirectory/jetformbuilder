@@ -2,9 +2,9 @@
 Contributors: crocoblock, mjhead, hugreed
 Tags: blocks, forms, form builder, contact form, gutenberg, gutenberg forms, multi step form.
 Requires at least: 6.0
-Tested up to: 6.4.3
+Tested up to: 6.6.1
 Requires PHP: 7.0
-Stable tag: 3.3.2
+Stable tag: 3.3.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -271,6 +271,43 @@ Yes. It's a push-a-button easy to import/export and duplicate your forms using t
 Once you set the <a href="https://jetformbuilder.com/features/how-to-use-store-form-record-action/" target="_blank">**Store Form Record Action**</a> you can check every single submitted form field data, submission date, the status of completeness, and user name on the <a href="https://jetformbuilder.com/features/wordpress-custom-form-records-page/" target="_blank">**Form Records Page</a>.
 
 == Changelog ==
+
+**3.3.4.2**
+- FIX: Privilege escalation with administrator-level via the Register / Update User actions
+
+**3.3.4.1**
+- FIX: Advanced Validation with Server-Side callback does not work on frontend
+- FIX: Honeypot protection breaks the form on frontend
+- FIX: Incorrect value in Calculated Field after page loading
+- FIX: Compatibility with PHP version < 8.0
+
+**3.3.4**
+- ADD: Eye-icon for password field
+- ADD: Gap controls for Checkbox / Radio fields (props [@stijnvanouplines](https://github.com/stijnvanouplines))
+- ADD: PHP actions `jet-form-builder/before-field` & `jet-form-builder/after-field` (props [@stijnvanouplines](https://github.com/stijnvanouplines))
+- ADD: Style controls for disabled Next Button
+- FIX: Advanced validation compatibility with Map Field
+- FIX: When returned to the form page, the Calculated values of the fields were not updated
+- FIX: The option to manage WP nonce was not in the correct state when creating a new form
+- FIX: Error in the database when trying to send a form on a page without the current post
+- FIX: Compatibility with JetBooking & Calculated Field
+
+**3.3.3.1**
+- Tweak: banner for admin-pages
+
+**3.3.3**
+- UPD: The Update Post action will fail if you try to change the post type. Use this filter to allow post type change:
+`add_filter( 'jet-form-builder/action/insert-post/allow-change-post-type', '__return_true' );`
+- UPD: When you activate the plugin for new sites, the following options will be updated:
+`Disable Next button` => disabled, `Scroll to the top on page change` => enabled, `Automatic focus` => enabled
+- ADD: Added missing size units & responsive controls for the JetForm Elementor widget
+(props [@stijnvanouplines](https://github.com/stijnvanouplines))
+- FIX: Ignoring "0" as default, minimum, and maximum attributes
+- FIX: Automatic page transition failed if the trigger field was inside a conditional block that disappears
+from the tree DOM.
+- FIX: Correct apply changes in daterangepicker on change value (jet-booking compatibility)
+- FIX: Form generation via AI on local servers
+- FIX: Captcha in a listing grid / query loop does not work correctly
 
 **3.3.2**
 - FIX: Use macros in Send Email when verifying a submission or processing a gateway.
