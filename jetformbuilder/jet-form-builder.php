@@ -1,15 +1,16 @@
 <?php
 /**
- * Plugin Name: JetFormBuilder
- * Plugin URI:  https://jetformbuilder.com/
- * Description: Advanced form builder plugin for WordPress block editor. Create forms from the ground up, customize the existing ones, and style them up – all in one editor.
- * Version:     3.3.4.2
- * Author:      Crocoblock
- * Author URI:  https://crocoblock.com/
- * Text Domain: jet-form-builder
- * License:     GPL-3.0+
- * License URI: http://www.gnu.org/licenses/gpl-3.0.txt
- * Domain Path: /languages
+ * Plugin Name:         JetFormBuilder
+ * Plugin URI:          https://jetformbuilder.com/
+ * Description:         Advanced form builder plugin for WordPress block editor. Create forms from the ground up, customize the existing ones, and style them up – all in one editor.
+ * Version:             3.4.0
+ * Author:              Crocoblock
+ * Author URI:          https://crocoblock.com/
+ * Text Domain:         jet-form-builder
+ * License:             GPL-3.0+
+ * License URI:         http://www.gnu.org/licenses/gpl-3.0.txt
+ * Domain Path:         /languages
+ * Requires at least:    6.1
  */
 
 // If this file is called directly, abort.
@@ -17,7 +18,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die();
 }
 
-const JET_FORM_BUILDER_VERSION = '3.3.4.2';
+const JET_FORM_BUILDER_VERSION = '3.4.0';
 
 const JET_FORM_BUILDER__FILE__ = __FILE__;
 const JET_FORM_BUILDER_SITE    = 'https://jetformbuilder.com';

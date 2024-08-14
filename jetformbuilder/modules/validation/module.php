@@ -151,7 +151,7 @@ final class Module implements
 
 	public function register_scripts() {
 		$script_asset = require_once jet_form_builder()->plugin_dir(
-			'assets/js/frontend/advanced.reporting.asset.php'
+			'assets/build/frontend/advanced.reporting.asset.php'
 		);
 
 		if ( true === $script_asset ) {
@@ -165,7 +165,7 @@ final class Module implements
 
 		wp_register_script(
 			self::HANDLE,
-			jet_form_builder()->plugin_url( 'assets/js/frontend/advanced.reporting.js' ),
+			jet_form_builder()->plugin_url( 'assets/build/frontend/advanced.reporting.js' ),
 			$script_asset['dependencies'],
 			$script_asset['version'],
 			true
@@ -184,6 +184,8 @@ final class Module implements
 		}
 
 		$data = Tools::encode_json( $this->settings );
+
+		wp_enqueue_script( self::HANDLE );
 
 		wp_add_inline_script(
 			\Jet_Form_Builder\Blocks\Module::MAIN_SCRIPT_HANDLE,
@@ -220,7 +222,6 @@ final class Module implements
 		if ( ! $this->is_advanced( $block->block_attrs ) ) {
 			return;
 		}
-		wp_enqueue_script( self::HANDLE );
 
 		$this->add_validation_messages_global( '', true );
 

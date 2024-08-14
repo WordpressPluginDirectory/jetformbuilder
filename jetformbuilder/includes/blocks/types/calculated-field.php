@@ -27,7 +27,7 @@ class Calculated_Field extends Base {
 
 	public function register_scripts() {
 		$script_asset = require_once jet_form_builder()->plugin_dir(
-			'assets/js/frontend/calculated.field.asset.php'
+			'assets/build/frontend/calculated.field.asset.php'
 		);
 
 		if ( true === $script_asset ) {
@@ -41,7 +41,7 @@ class Calculated_Field extends Base {
 
 		wp_register_script(
 			self::HANDLE,
-			Plugin::instance()->plugin_url( 'assets/js/frontend/calculated.field.js' ),
+			Plugin::instance()->plugin_url( 'assets/build/frontend/calculated.field.js' ),
 			$script_asset['dependencies'],
 			$script_asset['version'],
 			true

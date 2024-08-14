@@ -173,6 +173,16 @@ class Form extends Base {
 			)
 		);
 
+		$this->register_jet_control(
+			'clear',
+			array(
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Clear data on success submit', 'jet-form-builder' ),
+				'type'    => 'checkbox',
+				'default' => false,
+			)
+		);
+
 		$this->end_jet_control_group();
 	}
 	// End form settings
@@ -2568,7 +2578,7 @@ class Form extends Base {
 
 		wp_enqueue_style(
 			$module->get_handle( 'frontend' ),
-			$module->get_url( 'assets/build/css/frontend/frontend.css' ),
+			$module->get_url( 'assets/build/frontend.css' ),
 			array( 'jet-form-builder-frontend' ),
 			Plugin::instance()->get_version()
 		);

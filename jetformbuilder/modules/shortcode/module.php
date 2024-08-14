@@ -7,7 +7,13 @@ use Jet_Form_Builder\Classes\Arguments\Default_Form_Arguments;
 use Jet_Form_Builder\Classes\Arguments\Form_Arguments;
 use Jet_Form_Builder\Exceptions\Repository_Exception;
 use JFB_Components\Module\Base_Module_After_Install_It;
+use JFB_Components\Module\Base_Module_Dir_It;
+use JFB_Components\Module\Base_Module_Dir_Trait;
+use JFB_Components\Module\Base_Module_Handle_It;
+use JFB_Components\Module\Base_Module_Handle_Trait;
 use JFB_Components\Module\Base_Module_It;
+use JFB_Components\Module\Base_Module_Url_It;
+use JFB_Components\Module\Base_Module_Url_Trait;
 use JFB_Components\Repository\Repository_Pattern_Trait;
 
 // If this file is called directly, abort.
@@ -20,9 +26,22 @@ if ( ! defined( 'WPINC' ) ) {
  *
  * @package JFB_Modules\Shortcode
  */
-final class Module implements Base_Module_It, Base_Module_After_Install_It {
+final class Module implements
+	Base_Module_It,
+	Base_Module_After_Install_It,
+	Base_Module_Handle_It,
+	Base_Module_Url_It,
+	Base_Module_Dir_It {
 
 	use Repository_Pattern_Trait;
+	use Base_Module_Dir_Trait;
+	use Base_Module_Handle_Trait;
+	use Base_Module_Url_Trait;
+
+	/**
+	 * @var Onboarding_Builder
+	 */
+	private $onboarding_builder;
 
 	public function rep_item_id() {
 		return 'shortcode';
@@ -30,6 +49,8 @@ final class Module implements Base_Module_It, Base_Module_After_Install_It {
 
 	public function on_install() {
 		$this->rep_install();
+
+		$this->onboarding_builder = new Onboarding_Builder();
 	}
 
 	public function on_uninstall() {
@@ -54,6 +75,13 @@ final class Module implements Base_Module_It, Base_Module_After_Install_It {
 			10,
 			2
 		);
+		add_action(
+			'jet-form-builder/use-form/register-assets',
+			array( $this, 'block_editor_assets' ),
+			20
+		);
+
+		$this->get_onboarding_builder()->init_hooks();
 	}
 
 	public function remove_hooks() {
@@ -67,6 +95,11 @@ final class Module implements Base_Module_It, Base_Module_After_Install_It {
 		remove_action(
 			"manage_{$slug}_posts_custom_column",
 			array( $this, 'add_admin_column_content' )
+		);
+		remove_action(
+			'jet-form-builder/use-form/register-assets',
+			array( $this, 'block_editor_assets' ),
+			20
 		);
 	}
 
@@ -106,6 +139,16 @@ final class Module implements Base_Module_It, Base_Module_After_Install_It {
 			$arguments
 		);
 
+		if ( isset( $arguments['load_nonce'] ) ) {
+			unset( $arguments['load_nonce'] );
+		}
+		if ( isset( $arguments['use_honeypot'] ) ) {
+			unset( $arguments['use_honeypot'] );
+		}
+		if ( isset( $arguments['use_csrf'] ) ) {
+			unset( $arguments['use_csrf'] );
+		}
+
 		printf(
 			'<input readonly type="text" onclick="this.select()" value="%s" style="%s"/>',
 			esc_attr( $this->get_shortcode( 'jet_fb_form', $arguments ) ),
@@ -125,6 +168,26 @@ final class Module implements Base_Module_It, Base_Module_After_Install_It {
 		return sprintf( $format, $type->get_name(), $this->generate_arguments_string( $arguments ) );
 	}
 
+	public function block_editor_assets() {
+		/** @var \JFB_Modules\Onboarding\Module $onboarding */
+		/** @noinspection PhpUnhandledExceptionInspection */
+		$onboarding   = jet_form_builder()->module( 'onboarding' );
+		$script_asset = require_once $this->get_dir( 'assets/build/block.editor.asset.php' );
+
+		array_push(
+			$script_asset['dependencies'],
+			$onboarding->get_use_form()->get_handle()
+		);
+
+		wp_enqueue_script(
+			$this->get_handle( 'block-editor' ),
+			$this->get_url( 'assets/build/block.editor.js' ),
+			$script_asset['dependencies'],
+			$script_asset['version'],
+			true
+		);
+	}
+
 	private function generate_arguments_string( $arguments ): string {
 		$response = array();
 
@@ -133,5 +196,12 @@ final class Module implements Base_Module_It, Base_Module_After_Install_It {
 		}
 
 		return implode( ' ', $response );
+	}
+
+	/**
+	 * @return Onboarding_Builder
+	 */
+	public function get_onboarding_builder(): Onboarding_Builder {
+		return $this->onboarding_builder;
 	}
 }

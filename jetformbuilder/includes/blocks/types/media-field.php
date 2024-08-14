@@ -124,7 +124,7 @@ class Media_Field extends Base {
 
 	public function register_scripts() {
 		$script_asset = require_once jet_form_builder()->plugin_dir(
-			'assets/js/frontend/media.field.asset.php'
+			'assets/build/frontend/media.field.asset.php'
 		);
 
 		if ( true === $script_asset ) {
@@ -146,14 +146,14 @@ class Media_Field extends Base {
 		);
 		wp_register_script(
 			self::HANDLE,
-			Plugin::instance()->plugin_url( 'assets/js/frontend/media.field.js' ),
+			Plugin::instance()->plugin_url( 'assets/build/frontend/media.field.js' ),
 			$script_asset['dependencies'],
 			$script_asset['version'],
 			true
 		);
 
 		$script_asset = require_once jet_form_builder()->plugin_dir(
-			'assets/js/frontend/media.field.restrictions.asset.php'
+			'assets/build/frontend/media.field.restrictions.asset.php'
 		);
 
 		array_push(
@@ -163,7 +163,7 @@ class Media_Field extends Base {
 
 		wp_register_script(
 			self::RESTRICTIONS,
-			Plugin::instance()->plugin_url( 'assets/js/frontend/media.field.restrictions.js' ),
+			Plugin::instance()->plugin_url( 'assets/build/frontend/media.field.restrictions.js' ),
 			$script_asset['dependencies'],
 			$script_asset['version'],
 			true

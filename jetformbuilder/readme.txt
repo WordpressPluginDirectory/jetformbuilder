@@ -1,10 +1,10 @@
 ﻿=== JetFormBuilder — Dynamic Blocks Form Builder ===
 Contributors: crocoblock, mjhead, hugreed
 Tags: blocks, forms, form builder, contact form, gutenberg, gutenberg forms, multi step form.
-Requires at least: 6.0
+Requires at least: 6.1
 Tested up to: 6.6.1
 Requires PHP: 7.0
-Stable tag: 3.3.4.2
+Stable tag: 3.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -271,6 +271,15 @@ Yes. It's a push-a-button easy to import/export and duplicate your forms using t
 Once you set the <a href="https://jetformbuilder.com/features/how-to-use-store-form-record-action/" target="_blank">**Store Form Record Action**</a> you can check every single submitted form field data, submission date, the status of completeness, and user name on the <a href="https://jetformbuilder.com/features/wordpress-custom-form-records-page/" target="_blank">**Form Records Page</a>.
 
 == Changelog ==
+
+**3.4.0**
+- ADD: New UI for actions
+- ADD: Preview or quickly use a form
+- ADD: Check Mark block for JetEngine Listings
+- ADD: Autocomplete search input for the Map Field
+- ADD: CC & BCC options for Send Email action
+- FIX: Indexing repeater
+- FIX: Incorrect form update request in the editor
 
 **3.3.4.2**
 - FIX: Privilege escalation with administrator-level via the Register / Update User actions

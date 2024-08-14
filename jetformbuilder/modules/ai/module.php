@@ -88,14 +88,6 @@ class Module implements
 			$parser_module->get_handle()
 		);
 
-		wp_enqueue_style(
-			$this->get_handle(),
-			$this->get_url( 'assets/build/modal.css' ),
-			array(
-				'wp-components',
-			),
-			$script_asset['version']
-		);
 		wp_enqueue_script(
 			$this->get_handle(),
 			$this->get_url( 'assets/build/admin/forms.js' ),
@@ -119,25 +111,29 @@ class Module implements
 	}
 
 	public function editor_enqueue_assets() {
+		$script_asset = require_once $this->get_dir( 'assets/build/editor.asset.php' );
+
+		if ( true === $script_asset ) {
+			return;
+		}
+
 		/** @var \JFB_Modules\Html_Parser\Module $parser_module */
 		/** @noinspection PhpUnhandledExceptionInspection */
 		$parser_module = jet_form_builder()->module( 'html-parser' );
-
 		$parser_module->register_scripts();
+
+		array_push(
+			$script_asset['dependencies'],
+			$parser_module->get_handle(),
+			'jet-fb-components'
+		);
+
 		wp_enqueue_script(
 			$this->get_handle(),
 			$this->get_url( 'assets/build/editor.js' ),
-			array(
-				$parser_module->get_handle(),
-			),
-			jet_form_builder()->get_version(),
+			$script_asset['dependencies'],
+			$script_asset['version'],
 			true
-		);
-		wp_enqueue_style(
-			$this->get_handle(),
-			$this->get_url( 'assets/build/modal.css' ),
-			array(),
-			jet_form_builder()->get_version()
 		);
 	}
 }

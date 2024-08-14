@@ -89,6 +89,11 @@ final class Module implements
 	public function enqueue_admin_assets() {
 		$script_asset = require_once $this->get_dir( 'assets/build/editor.asset.php' );
 
+		array_push(
+			$script_asset['dependencies'],
+			'jet-fb-components'
+		);
+
 		// for all blocks
 		wp_enqueue_script(
 			$this->get_handle(),
@@ -148,6 +153,13 @@ final class Module implements
 			true
 		);
 
+		wp_register_style(
+			$this->get_handle( 'checkbox' ),
+			$this->get_url( 'assets/build/checkbox.css' ),
+			array(),
+			$script_asset['version']
+		);
+
 		// options restrictions
 		$script_asset = require_once $this->get_dir(
 			'assets/build/custom.options.restrictions.asset.php'
@@ -180,6 +192,12 @@ final class Module implements
 			$script_asset['dependencies'],
 			$script_asset['version'],
 			true
+		);
+		wp_register_style(
+			$this->get_handle( 'radio' ),
+			$this->get_url( 'assets/build/radio.css' ),
+			array(),
+			$script_asset['version']
 		);
 	}
 

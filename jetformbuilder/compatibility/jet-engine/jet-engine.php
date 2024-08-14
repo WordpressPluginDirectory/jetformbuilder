@@ -5,17 +5,18 @@ namespace JFB_Compatibility\Jet_Engine;
 
 use Jet_Engine\Query_Builder\Queries\Base_Query;
 use Jet_Form_Builder\Actions\Methods\Object_Properties_Collection;
+use Jet_Form_Builder\Exceptions\Repository_Exception;
+use JFB_Compatibility\Jet_Engine\Blocks\Check_Mark\Block_Asset;
+use JFB_Compatibility\Jet_Engine\Compatibility\Bricks\Bricks;
+use JFB_Compatibility\Jet_Engine\Compatibility\Elementor\Elementor;
 use JFB_Modules\Option_Field\Blocks\Checkbox;
 use JFB_Modules\Option_Field\Blocks\Radio;
 use Jet_Form_Builder\Classes\Builder_Helper;
 use JFB_Compatibility\Jet_Engine\Actions\Update_Options;
-use JFB_Compatibility\Jet_Engine\Blocks\Map_Field;
-use JFB_Compatibility\Jet_Engine\Blocks\Map_Tools;
 use JFB_Compatibility\Jet_Engine\Generators\Get_From_Field;
 use JFB_Compatibility\Jet_Engine\Generators\Get_From_Je_Query;
 use JFB_Compatibility\Jet_Engine\Methods\Post_Modification\Post_Je_Relation_Property;
 use JFB_Compatibility\Jet_Engine\Option_Query\Inner_Module;
-use JFB_Compatibility\Jet_Engine\Parsers\Map_Field_Parser;
 use JFB_Compatibility\Jet_Engine\Preset_Sources\Preset_Source_Options_Page;
 use JFB_Compatibility\Jet_Engine\Preset_Sources\Preset_User;
 use JFB_Components\Compatibility\Base_Compat_Dir_Trait;
@@ -51,6 +52,17 @@ class Jet_Engine implements
 	 * @var Inner_Module|null
 	 */
 	private $option_query;
+	private $option_type = 'checkbox';
+
+	/**
+	 * @var Elementor
+	 */
+	private $elementor;
+
+	/**
+	 * @var Bricks
+	 */
+	private $bricks;
 
 	public function rep_item_id() {
 		return 'jet-engine';
@@ -61,23 +73,15 @@ class Jet_Engine implements
 	}
 
 	public function on_install() {
-		/** @var \JFB_Modules\Block_Parsers\Module $module */
-		/** @noinspection PhpUnhandledExceptionInspection */
-		$module = jet_form_builder()->module( 'block-parsers' );
-
-		$module->install( new Map_Field_Parser() );
-
 		$this->option_query = new Inner_Module();
+		$this->elementor    = new Elementor();
+		$this->bricks       = new Bricks();
 	}
 
 	public function on_uninstall() {
-		/** @var \JFB_Modules\Block_Parsers\Module $module */
-		/** @noinspection PhpUnhandledExceptionInspection */
-		$module = jet_form_builder()->module( 'block-parsers' );
-
-		$module->uninstall( new Map_Field_Parser() );
-
 		$this->option_query = null;
+		$this->elementor    = null;
+		$this->bricks       = null;
 	}
 
 	public function init_hooks() {
@@ -111,15 +115,19 @@ class Jet_Engine implements
 			array( $this, 'add_blocks' ),
 			0
 		);
+		add_action(
+			'jet-engine/blocks-views/register-block-types',
+			array( $this, 'register_listing_related_blocks' )
+		);
 		add_filter(
 			'jet-form-builder/render/checkbox-field/option',
-			array( $this, 'on_render_field_option' ),
+			array( $this, 'on_render_field_checkbox' ),
 			10,
 			4
 		);
 		add_filter(
 			'jet-form-builder/render/radio-field/option',
-			array( $this, 'on_render_field_option' ),
+			array( $this, 'on_render_field_radio' ),
 			10,
 			4
 		);
@@ -140,6 +148,14 @@ class Jet_Engine implements
 		}
 
 		$this->option_query->init_hooks();
+
+		if ( jet_form_builder()->has_compat( 'elementor' ) ) {
+			$this->elementor->init_hooks();
+		}
+
+		if ( jet_form_builder()->has_compat( 'bricks' ) ) {
+			$this->bricks->init_hooks();
+		}
 	}
 
 	public function remove_hooks() {
@@ -200,7 +216,6 @@ class Jet_Engine implements
 	}
 
 	public function register_scripts() {
-		$handle       = $this->get_handle( 'map-field' );
 		$script_asset = require_once $this->get_dir( 'assets/build/frontend/listing.options.asset.php' );
 
 		if ( true === $script_asset ) {
@@ -219,38 +234,6 @@ class Jet_Engine implements
 			$script_asset['version'],
 			true
 		);
-
-		$script_asset = require_once $this->get_dir( 'assets/build/frontend/map.field.asset.php' );
-
-		array_push(
-			$script_asset['dependencies'],
-			Module::MAIN_SCRIPT_HANDLE,
-			'wp-api-fetch'
-		);
-
-		wp_register_script(
-			$handle,
-			$this->get_url( 'assets/build/frontend/map.field.js' ),
-			$script_asset['dependencies'],
-			$script_asset['version'],
-			true
-		);
-
-		wp_localize_script(
-			$handle,
-			'JetMapFieldsSettings',
-			array(
-				'api'     => jet_engine()->api->get_route( 'get-map-point-data' ),
-				'apiHash' => jet_engine()->api->get_route( 'get-map-location-hash' ),
-				'nonce'   => wp_create_nonce( 'jet-map-field' ),
-				'i18n'    => array(
-					'loading'   => esc_html__( 'Loading ...', 'jet-form-builder' ),
-					'notFound'  => esc_html__( 'Address not found', 'jet-form-builder' ),
-					'resetBtn'  => esc_html__( 'Reset location', 'jet-form-builder' ),
-					'descTitle' => esc_html__( 'Lat and Lng are separately stored in the following fields', 'jet-form-builder' ),
-				),
-			)
-		);
 	}
 
 	public function enqueue_admin_assets() {
@@ -263,17 +246,6 @@ class Jet_Engine implements
 			$script_asset['dependencies'],
 			$script_asset['version'],
 			true
-		);
-
-		wp_localize_script(
-			$handle,
-			'JetFBMapField',
-			array(
-				'image'        => $this->get_url( 'assets/img/map-placeholder.png' ),
-				'formats'      => Map_Tools::get_formats(),
-				'is_supported' => Map_Tools::is_supported(),
-				'help'         => Map_Tools::get_help_message(),
-			)
 		);
 	}
 
@@ -298,9 +270,20 @@ class Jet_Engine implements
 	}
 
 	public function add_blocks( array $blocks ): array {
-		$blocks[] = new Map_Field();
+		array_push(
+			$blocks,
+			new Blocks\Map_Field\Block_Type()
+		);
 
 		return $blocks;
+	}
+
+	public function register_listing_related_blocks() {
+		register_block_type(
+			$this->get_dir( 'blocks/check-mark' )
+		);
+
+		( new Block_Asset() )->init_hooks();
 	}
 
 	public function add_actions( \Jet_Form_Builder\Actions\Manager $manager ) {
@@ -311,6 +294,18 @@ class Jet_Engine implements
 		Object_Properties_Collection $collection
 	): Object_Properties_Collection {
 		return $collection->add( new Post_Je_Relation_Property() );
+	}
+
+	public function on_render_field_checkbox( string $item, $value, $option, $render ): string {
+		$this->option_type = 'checkbox';
+
+		return $this->on_render_field_option( $item, $value, $option, $render );
+	}
+
+	public function on_render_field_radio( string $item, $value, $option, $render ): string {
+		$this->option_type = 'radio';
+
+		return $this->on_render_field_option( $item, $value, $option, $render );
 	}
 
 	/**
@@ -379,6 +374,15 @@ class Jet_Engine implements
 			default:
 				return $data_object;
 		}
+	}
+
+	/**
+	 * Only for the internal usage.
+	 *
+	 * @return string
+	 */
+	public function get_option_type(): string {
+		return $this->option_type;
 	}
 
 }
