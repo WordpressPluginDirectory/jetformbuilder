@@ -22,7 +22,8 @@ class Verify_Token_Action extends BaseVerify {
 			return $response;
 		}
 
-		throw new Gateway_Exception( 'captcha_failed' );
+		// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		throw new Gateway_Exception( Module::SPAM_EXCEPTION );
 	}
 
 }

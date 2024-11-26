@@ -241,8 +241,10 @@ abstract class Base extends Base_Module implements Repository_Item_Instance_Trai
 	public function render_callback_field( array $attrs, $content = null, $wp_block = null ) {
 		try {
 			$before = $this->before_render_field( $attrs, $content, $wp_block );
+			$render = $before . $this->render_field( $attrs, $content, $wp_block );
+			$after = $this->after_render_field( $attrs, $content, $wp_block );
+			return $render . $after;
 
-			return $before . $this->render_field( $attrs, $content, $wp_block );
 		} catch ( Render_Empty_Field $exception ) {
 			return '';
 		}
@@ -275,6 +277,7 @@ abstract class Base extends Base_Module implements Repository_Item_Instance_Trai
 			 */
 			$parsed_block = $wp_block ? $wp_block->parsed_block : null;
 			$result[]     = $this->get_block_renderer( $parsed_block );
+
 		}
 
 		$result[] = $this->end_form_row();
@@ -285,6 +288,17 @@ abstract class Base extends Base_Module implements Repository_Item_Instance_Trai
 	protected function before_render_field( array $attrs, $content = null, $wp_block = null ): string {
 		return apply_filters(
 			'jet-form-builder/before-render-field',
+			'',
+			$this->get_name(),
+			$attrs,
+			$content,
+			$wp_block
+		);
+	}
+
+	protected function after_render_field( array $attrs, $content = null, $wp_block = null ): string {
+		return apply_filters(
+			'jet-form-builder/after-render-field',
 			'',
 			$this->get_name(),
 			$attrs,
