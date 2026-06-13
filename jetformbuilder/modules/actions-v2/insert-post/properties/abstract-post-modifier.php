@@ -5,6 +5,7 @@ namespace JFB_Modules\Actions_V2\Insert_Post\Properties;
 
 use Jet_Form_Builder\Actions\Methods\Abstract_Modifier;
 use JFB_Modules\Actions_V2\Insert_Post\Insert_Post_Action;
+use Jet_Form_Builder\Classes\Value_Normalizers\Single_Value_As_Array;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -18,6 +19,7 @@ abstract class Abstract_Post_Modifier extends Abstract_Modifier {
 	abstract public function get_id(): string;
 
 	public function before_run( Insert_Post_Action $action ) {
+
 		$request      = jet_fb_context()->resolve_request();
 		$fields_map   = $action->settings['fields_map'] ?? array();
 		$post_status  = $action->settings['post_status'] ?? '';
@@ -27,6 +29,11 @@ abstract class Abstract_Post_Modifier extends Abstract_Modifier {
 
 		/** @var Post_Meta_Property $meta */
 		$meta = $this->get( 'meta_input' );
+
+		$this->single_value_as_array = Single_Value_As_Array::prepare_flags(
+			$action->settings['single_value_as_array'] ?? array()
+		);
+
 		$meta->set_meta( Post_Meta_Property::prepare_meta( $default_meta ) );
 
 		$this->set_fields_map( $fields_map );

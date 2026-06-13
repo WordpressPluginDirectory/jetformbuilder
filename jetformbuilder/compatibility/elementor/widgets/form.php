@@ -341,7 +341,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$booking_form->add_control(
 			'builder__checkbox_state--normal__bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__field-wrap .for-checkbox span::before' ) => 'background-color: {{VALUE}}',
@@ -366,7 +366,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$booking_form->add_control(
 			'builder__checkbox_state--checked__bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__field-wrap label.for-checkbox :checked + span::before' ) => 'background-color: {{VALUE}}',
@@ -446,7 +446,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$booking_form->add_control(
 			'builder__radio_state--normal__bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__field-wrap .for-radio span::before' ) => 'background-color: {{VALUE}}',
@@ -470,7 +470,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$booking_form->add_control(
 			'builder__radio_state--checked__bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__field-wrap label.for-radio :checked + span::before' ) => 'background-color: {{VALUE}}',
@@ -653,7 +653,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$instance->add_control(
 			'jet_fb_progress_wrapper_bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$selector_callable( '-progress-pages' ) => 'background-color: {{VALUE}}',
@@ -746,7 +746,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$instance->add_control(
 			'jet_fb_progress_pages_tab--current_bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$selector_callable( $scheme['active-item'] ) => 'background-color: {{VALUE}}',
@@ -856,7 +856,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$instance->add_control(
 			'jet_fb_progress_pages_tab--next_bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$selector_callable( $scheme['next-item'] ) => 'background-color: {{VALUE}}',
@@ -966,7 +966,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$instance->add_control(
 			'jet_fb_progress_pages_tab--prev_bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$selector_callable( $scheme['prev-item'] ) => 'background-color: {{VALUE}}',
@@ -1049,8 +1049,22 @@ class Form extends Widget_Base implements Widget_Base_It {
 	 * @access protected
 	 */
 	protected function register_controls() {
+		do_action(
+			'jfb/elementor/form/before-form-settings',
+			$this
+		);
 
 		$this->section_form_settings();
+
+		do_action(
+			'jfb/elementor/form/after-form-settings',
+			$this
+		);
+
+		do_action(
+			'jfb/elementor/form/before-style-sections',
+			$this
+		);
 
 		/** Form Row */
 		$this->section_form_style();
@@ -1104,6 +1118,11 @@ class Form extends Widget_Base implements Widget_Base_It {
 
 		/** Messages */
 		$this->section_message_error_style();
+
+		do_action(
+			'jfb/elementor/form/after-style-sections',
+			$this
+		);
 	}
 
 	private function section_form_settings() {
@@ -1114,6 +1133,13 @@ class Form extends Widget_Base implements Widget_Base_It {
 			array(
 				'label' => __( 'Form Settings', 'jet-form-builder' ),
 			)
+		);
+
+		do_action(
+			'jfb/elementor/form/settings/before-controls',
+			$this,
+			array(),
+			$this
 		);
 
 		$this->add_control(
@@ -1212,6 +1238,13 @@ class Form extends Widget_Base implements Widget_Base_It {
 				'return_value' => 'yes',
 				'default'      => '',
 			)
+		);
+
+		do_action(
+			'jfb/elementor/form/settings/after-controls',
+			$this,
+			array(),
+			$this
 		);
 
 		$this->end_controls_section();
@@ -1349,7 +1382,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'form_label_bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__label' ) => 'background-color: {{VALUE}};',
@@ -1472,7 +1505,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'form_description_bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__desc' ) => 'background-color: {{VALUE}};',
@@ -1614,7 +1647,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'checkradio_fields_background_color',
 			array(
-				'label'     => __( 'Background color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__field-wrap label' ) => 'background-color: {{VALUE}}',
@@ -1645,10 +1678,10 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'tab__checkradio_control_bg_color__normal',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					$this->selector( '__field-wrap label > span::before' ) => 'background-color: {{VALUE}};',
+					$this->selector( '__field-wrap label.jet-form-builder__field-label > span::before' ) => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -1671,7 +1704,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'tab__checkradio_control_bg_color__hover',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__field-wrap label :not(:disabled):not(:checked):hover + span::before' ) => 'background-color: {{VALUE}};',
@@ -1697,7 +1730,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'tab__checkradio_control_bg_color__focus',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__field-wrap label :focus:not(:checked) + span::before' ) => 'background-color: {{VALUE}};',
@@ -1723,7 +1756,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'tab__checkradio_control_bg_color__checked',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__field-wrap label :checked + span::before' ) => 'background-color: {{VALUE}};',
@@ -1737,7 +1770,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 	}
 
 	private function section_form_input_fields() {
-		$simple_input = '__field:not(.checkradio-field):not(.range-field):not(.%s-repeater):not(.wysiwyg-field)';
+		$simple_input = '__field:not(.checkradio-field):not(.range-field):not(.%s-repeater):not(.wysiwyg-field):not([role="switch"])';
 
 		$this->start_controls_section(
 			'section_form_input_fields',
@@ -1783,7 +1816,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'fields_background_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( $simple_input ) => 'background-color: {{VALUE}};',
@@ -1992,7 +2025,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'calc_fields_background_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__calculated-field' ) => 'background-color: {{VALUE}}',
@@ -2448,7 +2481,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'booking_form_repeater_bg_color',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '-repeater__new' ) => 'background-color: {{VALUE}};',
@@ -2479,7 +2512,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'booking_form_repeater_bg_color_hover',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '-repeater__new:hover' ) => 'background-color: {{VALUE}};',
@@ -2629,7 +2662,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'booking_form_repeater_del_bg_color',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '-repeater__remove' ) => 'background-color: {{VALUE}}',
@@ -2660,7 +2693,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'booking_form_repeater_del_bg_color_hover',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '-repeater__remove:hover' ) => 'background-color: {{VALUE}}',
@@ -2866,7 +2899,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'conditional_bg_color',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__conditional' ) => 'background-color: {{VALUE}}',
@@ -2899,7 +2932,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'booking_form_submit_bg_color',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__action-button' ) => 'background-color: {{VALUE}}',
@@ -2930,7 +2963,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'booking_form_submit_bg_color_hover',
 			array(
-				'label'     => esc_html__( 'Background Color', 'jet-form-builder' ),
+				'label'     => esc_html__( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__action-button:hover' ) => 'background-color: {{VALUE}}',
@@ -3301,7 +3334,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'form_break_next_bg_color--normal',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__next-page' ) => 'background-color: {{VALUE}};',
@@ -3345,7 +3378,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'form_break_next_bg_color--hover',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__next-page:hover' ) => 'background-color: {{VALUE}};',
@@ -3392,7 +3425,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 			$this->add_control(
 				'form_break_next_bg_color--disabled',
 				array(
-					'label'     => __( 'Background Color', 'jet-form-builder' ),
+					'label'     => __( 'Background', 'jet-form-builder' ),
 					'type'      => Controls_Manager::COLOR,
 					'selectors' => array(
 						$this->selector( '__next-page:disabled' ) => 'background-color: {{VALUE}};',
@@ -3501,7 +3534,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'form_break_prev_bg_color--normal',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__prev-page' ) => 'background-color: {{VALUE}};',
@@ -3545,7 +3578,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'form_break_prev_bg_color--hover',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '__prev-page:hover' ) => 'background-color: {{VALUE}};',
@@ -3700,7 +3733,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'form_success_bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '-message--success' ) => 'background-color: {{VALUE}};',
@@ -3796,7 +3829,7 @@ class Form extends Widget_Base implements Widget_Base_It {
 		$this->add_control(
 			'form_error_bg_color',
 			array(
-				'label'     => __( 'Background Color', 'jet-form-builder' ),
+				'label'     => __( 'Background', 'jet-form-builder' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->selector( '-message--error' ) => 'background-color: {{VALUE}};',

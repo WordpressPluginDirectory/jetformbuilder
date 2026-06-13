@@ -1,5 +1,5 @@
 {
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"name": "jet-forms/choice",
 	"title": "Advanced Choice",
 	"parent": [
@@ -29,8 +29,11 @@
 			"default": ""
 		},
 		"backgroundColor": {
-			"type": "string",
-			"default": "#f0f4f9"
+			"type": "string"
+		},
+		"style": {
+			"type": "object",
+			"default": {}
 		},
 		"isPreview": {
 			"type": "boolean",

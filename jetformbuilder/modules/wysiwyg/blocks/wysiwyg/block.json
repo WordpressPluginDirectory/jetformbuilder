@@ -1,5 +1,5 @@
 {
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"name": "jet-forms/wysiwyg-field",
 	"category": "jet-form-builder-fields",
 	"keywords": [
@@ -165,6 +165,10 @@
 		"jet-forms/repeater-field--name",
 		"jet-forms/repeater-row--default",
 		"jet-forms/repeater-row--current-index"
+	],
+	"editorStyle": [
+		"jet-fb-wysiwyg-lightgray-skin",
+		"jet-fb-wysiwyg"
 	],
 	"viewScript": "jet-fb-wysiwyg",
 	"style": "jet-fb-wysiwyg"

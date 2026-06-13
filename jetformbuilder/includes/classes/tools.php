@@ -3,6 +3,7 @@
 namespace Jet_Form_Builder\Classes;
 
 use Jet_Form_Builder\Plugin;
+use Jet_Form_Builder\Generators\Registry as GeneratorRegistry;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -144,6 +145,24 @@ class Tools {
 		return self::prepare_list_for_js( $generators );
 	}
 
+	/**
+	 * Get generator schemas for JS localization.
+	 *
+	 * @return array
+	 */
+	public static function get_generator_schemas_for_js(): array {
+		if ( ! class_exists( GeneratorRegistry::class ) ) {
+			return array();
+		}
+
+		try {
+			$registry = GeneratorRegistry::instance();
+			return $registry->get_schemas_for_js();
+		} catch ( \Exception $e ) {
+			return array();
+		}
+	}
+
 	public static function get_allowed_mimes_list_for_js(): array {
 		return array_values( get_allowed_mime_types() );
 	}
@@ -251,6 +270,108 @@ class Tools {
 
 			return $result;
 		}
+	}
+
+	/**
+	 * Returns editable roles and ensures the core helper is loaded.
+	 *
+	 * @return array
+	 */
+	public static function get_editable_roles_safe(): array {
+		if ( ! function_exists( 'get_editable_roles' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/user.php';
+		}
+
+		if ( ! function_exists( 'get_editable_roles' ) ) {
+			return array();
+		}
+
+		return get_editable_roles();
+	}
+
+	/**
+	 * Returns all registered roles without filtering by the current user's capabilities.
+	 *
+	 * @return array
+	 */
+	public static function get_registered_roles_safe(): array {
+		$wp_roles = wp_roles();
+
+		if ( ! is_a( $wp_roles, \WP_Roles::class ) ) {
+			return array();
+		}
+
+		return $wp_roles->roles ?? array();
+	}
+
+	/**
+	 * Returns auto-detected low-privilege roles that can be used as
+	 * a starting point for self-service role transitions.
+	 *
+	 * @return string[]
+	 */
+	public static function get_default_self_promotable_roles(): array {
+		$editable_roles = self::get_registered_roles_safe();
+
+		if ( empty( $editable_roles ) ) {
+			return array();
+		}
+
+		$roles = array();
+
+		foreach ( array_keys( $editable_roles ) as $role ) {
+			if ( self::is_safe_self_promotable_role( $role ) ) {
+				$roles[] = $role;
+			}
+		}
+
+		return array_values( array_unique( $roles ) );
+	}
+
+	public static function is_safe_self_promotable_role( string $role ): bool {
+		if ( 'administrator' === $role ) {
+			return false;
+		}
+
+		$wp_roles = wp_roles();
+
+		if ( ! isset( $wp_roles->roles[ $role ] ) ) {
+			return false;
+		}
+
+		$caps = array_filter( $wp_roles->roles[ $role ]['capabilities'] ?? array() );
+
+		$dangerous_caps = array(
+			'activate_plugins',
+			'create_users',
+			'delete_users',
+			'edit_users',
+			'list_users',
+			'promote_users',
+			'remove_users',
+			'manage_options',
+			'edit_theme_options',
+			'switch_themes',
+			'install_plugins',
+			'update_plugins',
+			'delete_plugins',
+			'install_themes',
+			'update_themes',
+			'delete_themes',
+			'unfiltered_html',
+			'edit_others_posts',
+			'delete_others_posts',
+			'publish_posts',
+			'manage_categories',
+		);
+
+		foreach ( $dangerous_caps as $cap ) {
+			if ( ! empty( $caps[ $cap ] ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -660,18 +781,43 @@ class Tools {
 		return false;
 	}
 
+	/**
+	 * Check if string is a WordPress password hash
+	 * Supports all WordPress hash formats:
+	 * - Old Portable Hash: $P$...
+	 * - Bcrypt: $2a$, $2y$...
+	 *
+	 * @param string $hash Password hash to check
+	 * @return bool
+	 */
 	public static function is_wp_password_hash( $hash ) {
-		return preg_match( '/^\$P\$[A-Za-z0-9\.\/]{31}$/', $hash );
+		if ( ! is_string( $hash ) || empty( $hash ) ) {
+			return false;
+		}
+
+		// Old Portable Hash format: $P$[A-Za-z0-9./]{31}
+		if ( preg_match( '/^\$P\$[A-Za-z0-9\.\/]{31}$/', $hash ) ) {
+			return true;
+		}
+
+		// Bcrypt format: $2a$, $2x$, $2y$ followed by cost and hash
+		if ( preg_match( '/^\$2[axy]\$\d{2}\$[A-Za-z0-9\.\/]{53}$/', $hash ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public static function get_array_of_user_roles( $settings ) {
-		$user_roles = $settings ?? array();
-		if ( ! empty( $user_roles ) ) {
-			if ( is_string( $user_roles ) ) {
-				$user_roles = array( $user_roles );
-			}
+		if ( is_string( $settings ) ) {
+			return '' === $settings ? array() : array( $settings );
 		}
-		return $user_roles;
+
+		if ( ! is_array( $settings ) ) {
+			return array();
+		}
+
+		return $settings;
 	}
 
 	public static function get_main_user_role_by_priority( $roles ): string {
